@@ -123,7 +123,14 @@ NDI=content[4].split()[1]     # ND(I) Degeneracy of the Ith irreducible represen
                               # (must be 1 in this version of the program)
 ITYPI=content[4].split()[2]   # ITYP(I) Label for the Ith irreducible representation
 
-NDPT=content[5]
+NDPT=content[5]               # Number of distinct products of irreducible
+                              # representations to be read in.  Do not include
+                              # any products involving the totally symmetric
+                              # irreducible representation.  It is 0 for C1, C2,
+                              # Cs, Ci; 1 for C2v, D2, C2h; 7 for D2h.  If
+                              # NDPT<0, then P1,P2,P3 values consistent with the
+                              # standard 8x8 multiplication table are generated
+                              # internally.
 #print(content[6])             # P1(I),P2(I),P3(I)   Numbers corresponding to irreducible
                               # representations as defined in data set 3 such
                               # that P1 X P2 = P3.  For C2v, D2, and C2h, these
@@ -150,31 +157,36 @@ NDPT=content[5]
 #print(content[11])
 #print(content[14])
 #print(content[15])
-NBFCR=content[14].split()[0]
-for i in range(int(NBFCR)):
-  alpha[0][i]=content[15+i].split()[0]
-  D[0][i]=content[15+i].split()[1]
-  print(str(i)+" "+str(alpha[0][i])+" "+str(D[0][i]))
-alpha[0][1]=content[16].split()[0]
-D[0][1]=content[16].split()[1]  
-alpha[0][2]=content[17].split()[0]
-D[0][2]=content[17].split()[1]  
-alpha[0][3]=content[18].split()[0]
-D[0][4]=content[19].split()[1]  
-alpha[0][5]=content[20].split()[0]
-D[0][5]=content[20].split()[1]  
-alpha[0][4]=content[19].split()[0]
-D[0][3]=content[18].split()[1]  
-#alpha[0][0]=
-print(alpha[0],D[0])
+line=14
+for j in range(int(NCONS)):
+ NRCRI=content[line].split()[0] #NRCR(I) Number of contractions in the Ith contraction set
+ line=line+1
+ for i in range(int(NRCRI)):
+  alpha[j][i]=content[line+i].split()[0]
+  D[j][i]=content[line+i].split()[1]
+  print(str(j)+" "+str(i)+" "+str(alpha[j][i])+" "+str(D[j][i]))
+ line=line+int(NRCRI)
 gridX=np.zeros((len(x),len(z)))
 gridZ=np.zeros((len(x),len(z)))
 r=0
+for i in range(int(NS)):
+  MCONSJ=content[line].split()[1] # Index of the Jth contraction set to be placed on
+                                  # all atoms of this type
+  COORD[i][0]=content[line+1].split()[0]
+  COORD[i][1]=content[line+1].split()[1]
+  COORD[i][2]=content[line+1].split()[2]
+  #for j in range(int(MCONSJ)):
+  #  MCONS[j]=
+  #print("MCONSJ="+MCONSJ)
 for nx in range(len(x)):
     for nz in range(len(z)):
         r=np.sqrt(x[nx]**2.0+z[nz]**2.0)
         gridX[nx,nz]=x[nx]
         gridZ[nx,nz]=z[nz]
+#TODO je dois savoir su quoi est centr\'e cette gaussienne
+#        for j in range(27):
+#          for i in range(6):
+#            AO[i,nx,nz]=AO[i,nx,nz]+D[j][i]*np.exp(-alpha[j][i]*r**2)
         orbc1s[nx,nz]=1.8347002E-03*np.exp(-3047.525*r**2)+1.4037301E-02*np.exp(-457.3695*r**2)+6.8842606E-02*np.exp(-103.9487*r**2)+0.2321844*np.exp(-29.21016*r**2)+0.4679413*np.exp(-9.286663*r**2)+0.3623120*np.exp(-3.163927*r**2)
         orbc2s[nx,nz]=-0.1193324*np.exp(-7.868272*r**2)-0.1608542*np.exp(-1.881288*r**2)+1.143456*np.exp(-0.5442493*r**2)
         orbc3s[nx,nz]=np.exp(-0.1687144*r**2)
