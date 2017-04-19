@@ -69,6 +69,8 @@ print('title = '+title)
 NGEN=content[3].split()[0]    # Number of symmetry operators (on nuclei) to be
                               # read in.  Only the generators are required
 NS=content[3].split()[1]      # Number of symmetry-distinct types of atoms
+COORD=np.zeros((int(NS),3))
+AO=np.zeros((int(NS),9)) #TODO find the number of basis function per atoms, 9 for CO2
 NAORDS=content[3].split()[2]  # Number of AO reduction sets.  Usually there will
                               # be one AO reduction set for each class of function
                               # (s,p,d,...) on each symmetry-distinct atom.  Other
@@ -170,13 +172,18 @@ gridX=np.zeros((len(x),len(z)))
 gridZ=np.zeros((len(x),len(z)))
 r=0
 for i in range(int(NS)):
+  # TODO find the number of basis function on this atoms
   MCONSJ=content[line].split()[1] # Index of the Jth contraction set to be placed on
                                   # all atoms of this type
   COORD[i][0]=content[line+1].split()[0]
   COORD[i][1]=content[line+1].split()[1]
   COORD[i][2]=content[line+1].split()[2]
+  #k=0
   #for j in range(int(MCONSJ)):
-  #  MCONS[j]=
+  #  orbtypetype=content[line+2].split()[1]
+  #  MCONS=content[line+2].split()[0]
+  #  AO[i][k]=D[j][i]*np.exp(-alpha[j][i]
+  #  k=k+1
   #print("MCONSJ="+MCONSJ)
 for nx in range(len(x)):
     for nz in range(len(z)):
